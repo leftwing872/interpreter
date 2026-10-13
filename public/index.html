@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live Interpreter</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Live Interpreter</h1>
+    <div class="controls">
+      <label>입력
+        <select id="source">
+          <option value="mic">마이크</option>
+          <option value="file">영상/오디오 파일</option>
+          <option value="display">화면/탭 오디오</option>
+        </select>
+      </label>
+      <label>언어
+        <select id="language"><option value="auto">자동 감지</option></select>
+      </label>
+      <input type="file" id="file" accept="video/*,audio/*" hidden />
+      <button id="pickFile" class="secondary" hidden>파일 선택</button>
+      <button id="start">시작</button>
+      <button id="stop" disabled>중지</button>
+      <button id="clear" class="secondary">지우기</button>
+      <button id="download" class="secondary">저장</button>
+      <span id="status" class="status">대기</span>
+    </div>
+  </header>
+
+  <main>
+    <section id="media" hidden>
+      <video id="video" controls playsinline></video>
+      <div id="caption" class="caption">
+        <div class="cap-src"></div>
+        <div class="cap-ko"></div>
+      </div>
+    </section>
+
+    <section id="transcript" class="transcript">
+      <div id="live" class="seg live" hidden><span class="lang"></span><div class="src"></div></div>
+    </section>
+  </main>
+
+  <footer><span id="meta"></span></footer>
+  <script src="app.js"></script>
+</body>
+</html>

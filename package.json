@@ -1,0 +1,35 @@
+{
+  "name": "interpreter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Live speech interpreter: Amazon Transcribe streaming + Amazon Bedrock (Claude) translation to Korean",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.scripts.json",
+    "smoke": "tsx scripts/smoke-test.ts",
+    "infra:synth": "npm --prefix infra run synth",
+    "infra:deploy": "npm --prefix infra run deploy",
+    "infra:destroy": "npm --prefix infra run destroy"
+  },
+  "dependencies": {
+    "@anthropic-ai/bedrock-sdk": "^0.34.4",
+    "@anthropic-ai/sdk": "^0.133.0",
+    "@aws-sdk/client-transcribe-streaming": "^3.1149.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.7.0",
+    "@types/ws": "^8.5.12",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

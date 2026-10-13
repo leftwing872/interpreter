@@ -1,0 +1,9 @@
+node_modules
+dist
+infra
+scripts
+.env
+.env.example
+*.log
+*.md
+.git

@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="700" viewBox="0 0 1180 700" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#4b5563"/>
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#2563eb"/>
+    </marker>
+    <style>
+      .box { fill:#ffffff; stroke:#9ca3af; stroke-width:1.5; rx:8; }
+      .aws { fill:#fff7ed; stroke:#f59e0b; stroke-width:1.5; rx:8; }
+      .net { fill:#eff6ff; stroke:#3b82f6; stroke-width:1.5; rx:8; }
+      .region { fill:#f9fafb; stroke:#d1d5db; stroke-width:1.5; stroke-dasharray:6 4; rx:12; }
+      .title { font-weight:600; font-size:14px; fill:#111827; }
+      .sub { fill:#4b5563; font-size:12px; }
+      .label { fill:#374151; font-size:12px; }
+      .accent { fill:#2563eb; font-size:13px; font-weight:700; }
+      .flow { stroke:#4b5563; stroke-width:1.6; fill:none; marker-end:url(#arrow); }
+      .flow2 { stroke:#2563eb; stroke-width:1.8; fill:none; marker-end:url(#arrow-accent); }
+      .both { stroke:#4b5563; stroke-width:1.6; fill:none; marker-end:url(#arrow); marker-start:url(#arrow); }
+    </style>
+  </defs>
+
+  <text x="24" y="34" font-size="20" font-weight="700" fill="#111827">Live Interpreter — Architecture</text>
+  <text x="24" y="54" class="sub">Amazon Transcribe streaming → Amazon Bedrock (Claude) → 한국어 자막 · ECS Fargate + CloudFront · CDK</text>
+
+  <!-- Browser -->
+  <rect x="24" y="90" width="230" height="300" class="box"/>
+  <text x="40" y="114" class="title">Browser (Chrome)</text>
+  <rect x="40" y="128" width="198" height="26" class="box"/><text x="50" y="146" class="label">마이크 (getUserMedia)</text>
+  <rect x="40" y="160" width="198" height="26" class="box"/><text x="50" y="178" class="label">영상/오디오 파일 (&lt;video&gt;)</text>
+  <rect x="40" y="192" width="198" height="26" class="box"/><text x="50" y="210" class="label">화면/탭 오디오 (getDisplayMedia)</text>
+  <path d="M139 218 L139 240" class="flow"/>
+  <rect x="40" y="242" width="198" height="46" class="box"/>
+  <text x="50" y="261" class="label">AudioWorklet (pcm-processor.js)</text>
+  <text x="50" y="278" class="sub">mono · 16 kHz · 16-bit PCM · 100 ms</text>
+  <path d="M139 288 L139 310" class="flow"/>
+  <rect x="40" y="312" width="198" height="60" class="box"/>
+  <text x="50" y="331" class="label">UI (index.html / app.js)</text>
+  <text x="50" y="348" class="sub">WebSocket /ws · 원문 partial/final</text>
+  <text x="50" y="364" class="sub">번역 스트리밍 · 접근 토큰(localStorage)</text>
+
+  <!-- CloudFront -->
+  <rect x="300" y="200" width="170" height="90" class="net"/>
+  <text x="316" y="224" class="title">Amazon CloudFront</text>
+  <text x="316" y="244" class="sub">HTTPS / WSS 종단 (TLS)</text>
+  <text x="316" y="260" class="sub">캐시 OFF · ALL_VIEWER</text>
+  <text x="316" y="276" class="sub">WebSocket 패스스루</text>
+  <path d="M254 245 L300 245" class="both"/>
+  <text x="258" y="236" class="accent">WSS</text>
+
+  <!-- Region -->
+  <rect x="500" y="80" width="656" height="600" class="region"/>
+  <text x="516" y="104" class="title">AWS Region: ap-northeast-2 (Seoul) · CDK InterpreterStack</text>
+
+  <!-- VPC -->
+  <rect x="516" y="120" width="330" height="300" class="region"/>
+  <text x="530" y="140" class="sub">VPC · public subnets ×2 · NAT 없음</text>
+
+  <rect x="532" y="158" width="298" height="78" class="net"/>
+  <text x="546" y="180" class="title">Application Load Balancer</text>
+  <text x="546" y="198" class="sub">HTTP :80 · idle timeout 300 s</text>
+  <text x="546" y="214" class="sub">SG: CloudFront origin-facing prefix list만 허용</text>
+  <text x="546" y="229" class="sub">health check GET /health</text>
+
+  <path d="M470 245 L500 245 L500 197 L532 197" class="both"/>
+  <text x="474" y="236" class="label">HTTP</text>
+
+  <path d="M681 236 L681 260" class="both"/>
+  <text x="690" y="252" class="sub">:3000</text>
+
+  <rect x="532" y="262" width="298" height="144" class="aws"/>
+  <text x="546" y="284" class="title">ECS Fargate · Node.js 22 (ARM64)</text>
+  <text x="546" y="300" class="sub">0.5 vCPU · 1 GB · desired 1 · circuit breaker</text>
+  <rect x="546" y="310" width="270" height="22" class="box"/><text x="556" y="326" class="label">server.ts — Express + ws · 토큰 검증 · /health</text>
+  <rect x="546" y="336" width="270" height="22" class="box"/><text x="556" y="352" class="label">session.ts — 연결당 세션 · 자동 재연결</text>
+  <rect x="546" y="362" width="130" height="22" class="box"/><text x="556" y="378" class="label">transcribe.ts</text>
+  <rect x="686" y="362" width="130" height="22" class="box"/><text x="696" y="378" class="label">translator.ts</text>
+  <text x="546" y="400" class="sub">Task Role: transcribe:StartStream* · bedrock:InvokeModel*</text>
+
+  <!-- Transcribe -->
+  <rect x="920" y="262" width="216" height="92" class="aws"/>
+  <text x="936" y="286" class="title">Amazon Transcribe</text>
+  <text x="936" y="304" class="sub">StartStreamTranscription</text>
+  <text x="936" y="320" class="sub">en-US · ja-JP · 자동 감지</text>
+  <text x="936" y="336" class="sub">partial / final 세그먼트</text>
+  <path d="M830 308 L920 308" class="flow2"/>
+  <text x="868" y="300" class="accent">①</text>
+
+  <!-- Bedrock -->
+  <rect x="920" y="372" width="216" height="92" class="aws"/>
+  <text x="936" y="396" class="title">Amazon Bedrock</text>
+  <text x="936" y="414" class="sub">global.anthropic.claude-opus-5-5</text>
+  <text x="936" y="430" class="sub">InvokeModelWithResponseStream</text>
+  <text x="936" y="446" class="sub">effort=low · 직전 6문장 문맥</text>
+  <path d="M830 373 L875 373 L875 418 L920 418" class="flow2"/>
+  <text x="884" y="408" class="accent">②</text>
+
+  <!-- Secrets / Logs under VPC -->
+  <rect x="516" y="440" width="160" height="64" class="aws"/>
+  <text x="530" y="462" class="title">Secrets Manager</text>
+  <text x="530" y="480" class="sub">ACCESS_TOKEN 자동 생성</text>
+  <text x="530" y="495" class="sub">→ 컨테이너 환경변수</text>
+  <path d="M596 440 L596 406" class="flow"/>
+
+  <rect x="686" y="440" width="160" height="64" class="aws"/>
+  <text x="700" y="462" class="title">CloudWatch Logs</text>
+  <text x="700" y="480" class="sub">awslogs · 30일 보존</text>
+  <text x="700" y="495" class="sub">Container Insights</text>
+  <path d="M766 406 L766 440" class="flow"/>
+
+  <!-- Data flow -->
+  <rect x="516" y="524" width="620" height="140" class="box"/>
+  <text x="530" y="546" class="title">데이터 흐름 (WebSocket 연결 1개 = 세션 1개)</text>
+  <text x="530" y="568" class="label">1. 브라우저가 start{language}를 보내고 100 ms PCM 프레임을 계속 전송</text>
+  <text x="530" y="586" class="label">2. ① 서버가 PCM을 Transcribe 스트림에 push. 2 s 이상 공백이면 무음 프레임으로 keep-alive (15 s 유휴 종료 방지)</text>
+  <text x="530" y="604" class="label">3. partial은 즉시 회색으로 표시, final은 확정 표시</text>
+  <text x="530" y="622" class="label">4. ② final마다 Claude가 직전 6문장 문맥으로 번역, 텍스트 delta를 그대로 UI에 스트리밍</text>
+  <text x="530" y="640" class="label">5. 스트림이 끊기면 자동 재연결(최대 5회, 인식 성공 시 리셋) · stop 시 남은 번역 완료 후 ended</text>
+</svg>
